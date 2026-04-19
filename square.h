@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <charconv>
+#include "consts.h"
 #include "types.h"
 
 namespace Graphene {
@@ -14,7 +15,11 @@ enum SQ : u16
   A2 = 0x41, B2, C2, D2,
 
   // and so on
+
+  None = MaxSQ - 1
 };
+
+using Move = SQ;
 
 INLINE SQ to_sq(int r, int f) { return static_cast<SQ>((r << 5) + f); }
 static SQ to_sq(std::string s)

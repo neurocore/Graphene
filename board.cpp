@@ -62,9 +62,9 @@ void Board::print() const
     for (int f = 1; f <= sz; f++)
     {
       Piece p = el[to_sq(r, f)];
-      if (p == Red)  log("\033[31mX\033[0m ");
-      if (p == Blue) log("\033[36mO\033[0m ");
-      else           log(". ");
+      if      (p == Red)  log("\033[31mX\033[0m ");
+      else if (p == Blue) log("\033[36mO\033[0m ");
+      else                log(". ");
     }
     log("\n");
     pad += " ";
@@ -84,11 +84,11 @@ void Board::place(SQ sq, Piece p)
       unite(sq, sq + offset);
 }
 
-bool Board::is_win(Piece p)
+bool Board::is_win(int opp)
 {
   const int M = sz + 1;
 
-  switch (p)
+  switch (stm ^ opp)
   {
     case Red:
     {
@@ -133,6 +133,25 @@ void Board::place_softly(SQ sq, Piece p)
     if (sq + offset < MaxSQ
     &&  el[sq + offset] == p)
       unite(sq, sq + offset);
+}
+
+void Board::make(Move move)
+{
+  place(move, (Piece)stm);
+  stm ^= 1;
+}
+
+void Board::generate(Moves & moves) const
+{
+  moves.clear();
+  for (int r = 1; r <= sz; r++)
+  {
+    for (int f = 1; f <= sz; f++)
+    {
+      const SQ sq = to_sq(r, f);
+      if (el[sq] == Nop) moves.push(sq);
+    }
+  }
 }
 
 }

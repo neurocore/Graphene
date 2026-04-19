@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "square.h"
 #include "consts.h"
+#include "moves.h"
 
 namespace Graphene {
 
@@ -20,12 +21,16 @@ struct Board
   Board(int size = 11);
   Board(const Board & B);
   void init();
-  void print() const;
 
-  void place(SQ sq, Piece p);
-  bool is_win(Piece p);
   SQ   find(SQ sq);
   void unite(SQ a, SQ b);
+
+  void place(SQ sq, Piece p);
+  bool is_win(int opp = 1);
+  void print() const;
+
+  void make(Move move);
+  void generate(Moves & moves) const;
 
 private:
   void place_softly(SQ sq, Piece p);
