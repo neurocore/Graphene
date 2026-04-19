@@ -39,7 +39,7 @@ void SolverMCTS::print_stats() const
   for (Idx i = start; i < end; i++)
   {
     log("{} - {:.5f} / {}\n",
-      (int)N[i].move, N[i].value / N[i].visits, N[i].visits);
+      N[i].move, N[i].value / N[i].visits, N[i].visits);
   }
 }
 

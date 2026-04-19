@@ -1,6 +1,7 @@
 #pragma once
 #include <random>
-#include "solver.h"
+#include "board.h"
+#include "timer.h"
 
 namespace Graphene {
 
@@ -30,7 +31,7 @@ struct alignas(64) Node
 };
 
 
-class SolverMCTS : public Solver
+class SolverMCTS
 {
   Board B, B0;
   Node * N;
@@ -44,6 +45,7 @@ class SolverMCTS : public Solver
 public:
   SolverMCTS(u32 nodes_max);
   ~SolverMCTS();
+  u32 nodes_used() const { return nodes_ptr; }
 
   Idx allocate_nodes(int cnt);
   void print_stats() const;
