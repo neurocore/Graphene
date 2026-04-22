@@ -27,6 +27,7 @@ struct Board
 
   void place(SQ sq, Piece p);
   bool is_win(int opp = 1);
+  bool legal(Move move);
   void print() const;
 
   void make(Move move);

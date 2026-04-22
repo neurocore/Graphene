@@ -36,6 +36,7 @@ class SolverMCTS
   Board B, B0;
   Node * N;
 
+  TimeSettings time;
   Idx nodes_ptr = Empty;
   Idx nodes_max = 100'000;
 
@@ -46,6 +47,9 @@ public:
   SolverMCTS(u32 nodes_max);
   ~SolverMCTS();
   u32 nodes_used() const { return nodes_ptr; }
+  void new_game();
+  void set(const Board & board);
+  void set(const TimeSettings & time);
 
   Idx allocate_nodes(int cnt);
   void print_stats() const;

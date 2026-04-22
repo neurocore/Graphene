@@ -19,6 +19,21 @@ SolverMCTS::~SolverMCTS()
   delete[] N;
 }
 
+void SolverMCTS::new_game()
+{
+  // TODO
+}
+
+void SolverMCTS::set(const Board & board)
+{
+  B = board;
+}
+
+void SolverMCTS::set(const TimeSettings & time)
+{
+  this->time = time;
+}
+
 // --------------------------------------------
 //   Utilities
 // --------------------------------------------
@@ -132,6 +147,10 @@ Idx SolverMCTS::expand(Idx node)
 
 Move SolverMCTS::get_move(Timestamp start, MS movetime)
 {
+  nodes_ptr = Empty;
+  for (Idx i = 0; i < nodes_max; i++)
+    N[i] = {};
+
   B.print();
   if (is_terminal(Root)) return None;
 
@@ -145,10 +164,7 @@ Move SolverMCTS::get_move(Timestamp start, MS movetime)
   log("Done - {} ms\n", time);
   Idx best = get_most_visited(Root);
 
-  B = B0;
-  B.make(N[best].move);
-  B.print();
-
+  B0.make(N[best].move);
   return N[best].move;
 }
 
@@ -157,8 +173,6 @@ void SolverMCTS::mcts()
   B = B0; // set at root
   const Idx curr = tree_policy(Root);
   if (!curr) return;
-
-  //log("{}\n", curr);
 
   const float reward = rollout(curr);
   backprop(curr, reward);
@@ -193,7 +207,6 @@ Idx SolverMCTS::get_best_child(Idx node)
     }
   }
   B.make(N[best].move);
-  //B.print();
   return best;
 }
 

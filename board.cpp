@@ -1,4 +1,5 @@
 #include <string>
+#include <cassert>
 #include "board.h"
 #include "utils.h"
 
@@ -107,6 +108,15 @@ bool Board::is_win(int opp)
   return false;
 }
 
+bool Board::legal(Move move)
+{
+  const int r = rank(move);
+  const int f = file(move);
+  if (r < 1 || r > sz) return false;
+  if (f < 1 || f > sz) return false;
+  return el[move] == Nop;
+}
+
 SQ Board::find(SQ sq)
 {
   if (parent[sq] != sq)
@@ -137,6 +147,8 @@ void Board::place_softly(SQ sq, Piece p)
 
 void Board::make(Move move)
 {
+  assert(move != None);
+  if (move == None) return;
   place(move, (Piece)stm);
   stm ^= 1;
 }

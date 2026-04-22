@@ -13,4 +13,11 @@ inline MS elapsed(Timestamp start)
   return std::chrono::duration_cast<Milli>(Clock::now() - start).count();
 }
 
+struct TimeSettings
+{
+  int main_time;
+  int byo_yomi_time;
+  int byo_yomi_stones;
+};
+
 }

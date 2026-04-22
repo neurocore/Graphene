@@ -35,6 +35,7 @@ INLINE int file(SQ sq) { return sq & 31; }
 
 INLINE std::string to_string(SQ sq)
 {
+  if (sq == None) return "None";
   return std::string()
     + (char)('A' + file(sq) - 1)
     + std::to_string(rank(sq));
