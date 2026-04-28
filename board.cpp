@@ -24,6 +24,7 @@ Board::Board(const Board & B)
       const SQ sq = to_sq(r, f);
       el[sq] = B.el[sq];
       parent[sq] = B.parent[sq];
+      order[sq] = B.order[sq];
     }
   }
 }
@@ -37,6 +38,7 @@ void Board::init()
   {
     el[i] = Nop;
     parent[i] = i;
+    order[i] = 0;
   }
 
   for (int i = 1; i <= sz; i++)
@@ -119,28 +121,38 @@ bool Board::legal(Move move)
 
 SQ Board::find(SQ sq)
 {
-  if (parent[sq] != sq)
+  while (parent[sq] != sq)
+  {
+    parent[sq] = parent[parent[sq]];
+    sq = parent[sq];
+  }
+  return sq;
+
+  /*if (parent[sq] != sq)
     parent[sq] = find(parent[sq]);
-  return parent[sq];
+  return parent[sq];*/
 }
 
 void Board::unite(SQ a, SQ b)
 {
-  SQ ra = find(a);
-  SQ rb = find(b);
+  const SQ ra = find(a);
+  const SQ rb = find(b);
   if (ra == rb) return; // same set
-  if (ra > rb) std::swap(ra, rb);
-  parent[ra] = rb;
+  if (order[ra] < order[rb]) parent[ra] = rb;
+  else if (order[ra] > order[rb]) parent[rb] = ra;
+  else { parent[rb] = ra; order[ra]++; }
 }
 
 void Board::place_softly(SQ sq, Piece p)
 {
   static const int offsets[] = { -32, -31, -1, +1, +31, +32 };
+  const int max = (sz + 1) * 33;
 
   el[sq] = p;
 
   for (int offset : offsets)
-    if (sq + offset < MaxSQ
+    if (sq + offset > 0
+    &&  sq + offset < max
     &&  el[sq + offset] == p)
       unite(sq, sq + offset);
 }
@@ -148,6 +160,7 @@ void Board::place_softly(SQ sq, Piece p)
 void Board::make(Move move)
 {
   assert(move != None);
+  assert(move < (sz + 1) * 33);
   if (move == None) return;
   place(move, (Piece)stm);
   stm ^= 1;

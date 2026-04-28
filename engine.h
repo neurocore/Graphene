@@ -27,6 +27,9 @@ public:
   bool do_move(Move mv);
   void go(Piece p, MS movetime);
   void fen();
+
+  // learning
+  void learn_patterns(std::string file);
 };
 
 }

@@ -86,8 +86,8 @@ void SolverMCTS::print_stats() const
 WDL SolverMCTS::get_wdl()
 {
   //if (B.is_draw()) return Draw; // no way
-  if (B.is_win(1)) { log("{}\n", B.stm ? "Red" : "Blue"); B.print(); return Lose; }
-  if (B.is_win(0)) { log("{}\n", B.stm ? "Blue" : "Red"); B.print(); return Win; }
+  if (B.is_win(1)) return Lose;
+  if (B.is_win(0)) return Win;
   return NonTerminal;
 }
 

@@ -1,7 +1,11 @@
 #pragma once
 #include <iostream>
 #include <format>
+#include <string>
+#include <vector>
 #include "types.h"
+
+using Strings = std::vector<std::string>;
 
 namespace Graphene {
 
@@ -24,6 +28,22 @@ INLINE void dry(std::string & str, std::string_view chars = "\n")
       str.erase(pos, 1);
     }
   }
+}
+
+static Strings split(const std::string & str, std::string delim = " ")
+{
+  Strings result;
+  if (delim.empty()) return result;
+
+  size_t start = 0, end;
+  while ((end = str.find(delim, start)) != std::string::npos)
+  {
+    if (end != start)
+      result.push_back(str.substr(start, end - start));
+    start = end + delim.size();
+  }
+  result.push_back(str.substr(start));
+  return result;
 }
 
 inline int parse_int(const std::string_view str, int def = 0, int base = 10)

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include "learning.h"
 #include "engine.h"
 #include "utils.h"
 
@@ -185,6 +186,25 @@ bool Engine::parse(string str)
   else if (cmd == "showboard")
   {
   }
+  else if (cmd == "learn") [[unlikely]]
+  {
+    do
+    {
+      string type = cut(str);
+      string file = cut(str);
+
+      if (type.empty()) { log("Format 'learn [type] [file]'\n"); break; }
+      if (file.empty()) { log("Missing file to learn from\n"); break; }
+
+      if (type == "patterns") learn_patterns(file);
+      else
+      {
+        log("Unknown learning type\n");
+        break;
+      }
+    }
+    while(false);
+  }
   else
   {
     error("unknown command");
@@ -228,6 +248,14 @@ void Engine::go(Piece p, MS movetime)
   B.print();
 
   S->print_stats();
+}
+
+void Engine::learn_patterns(std::string file)
+{
+  vector<Game> games;
+  DataProvider(games).open(file);
+
+  log("Loaded {} games\n", games.size());
 }
 
 }
