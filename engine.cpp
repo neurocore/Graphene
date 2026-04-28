@@ -226,6 +226,8 @@ void Engine::go(Piece p, MS movetime)
 
   B.make(move);
   B.print();
+
+  S->print_stats();
 }
 
 }

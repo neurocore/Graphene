@@ -1,4 +1,6 @@
 #include <cassert>
+#include <vector>
+#include <utility>
 #include "solver_mcts.h"
 #include "moves.h"
 #include "utils.h"
@@ -48,14 +50,33 @@ Idx SolverMCTS::allocate_nodes(int cnt)
 
 void SolverMCTS::print_stats() const
 {
+  using Stat = tuple<int, float, Move>;
+  vector<Stat> stats;
+
   const Idx start = N[Root].child_start_idx;
   const Idx end = start + N[Root].children_count;
 
   for (Idx i = start; i < end; i++)
   {
-    log("{} - {:.5f} / {}\n",
-      N[i].move, N[i].value / N[i].visits, N[i].visits);
+    const float rate = N[i].value / N[i].visits;
+    stats.push_back( make_tuple(N[i].visits, rate, N[i].move) );
   }
+
+  sort(stats.begin(), stats.end(), [](const Stat & a, const Stat & b)
+  {
+    return get<0>(a) > get<0>(b);
+  });
+
+  for (int i = 0; i < 5; i++)
+  {
+    auto [visits, rate, move] = stats[i];
+    log("{} - {:.5f} / {}\n", move, rate, visits);
+  }
+
+  log("\n");
+  log(" best move: {}\n", get<2>(stats[0]));
+  log("  win rate: {}\n", get<1>(stats[0]));
+  log("nodes used: {}\n\n", nodes_used());
 }
 
 // --------------------------------------------
@@ -65,8 +86,8 @@ void SolverMCTS::print_stats() const
 WDL SolverMCTS::get_wdl()
 {
   //if (B.is_draw()) return Draw; // no way
-  if (B.is_win(1)) return Lose;
-  if (B.is_win(0)) return Win;
+  if (B.is_win(1)) { log("{}\n", B.stm ? "Red" : "Blue"); B.print(); return Lose; }
+  if (B.is_win(0)) { log("{}\n", B.stm ? "Blue" : "Red"); B.print(); return Win; }
   return NonTerminal;
 }
 
