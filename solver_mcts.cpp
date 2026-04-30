@@ -67,15 +67,23 @@ void SolverMCTS::print_stats() const
     return get<0>(a) > get<0>(b);
   });
 
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < std::min(5, (int)stats.size()); i++)
   {
     auto [visits, rate, move] = stats[i];
     log("{} - {:.5f} / {}\n", move, rate, visits);
   }
 
   log("\n");
-  log(" best move: {}\n", get<2>(stats[0]));
-  log("  win rate: {}\n", get<1>(stats[0]));
+
+  if (!stats.empty())
+  {
+    log(" best move: {}\n", get<2>(stats[0]));
+    log("  win rate: {}\n", get<1>(stats[0]));
+  }
+  else
+  {
+    log("-- no moves! --\n");
+  }
   log("nodes used: {}\n\n", nodes_used());
 }
 
@@ -115,7 +123,7 @@ float SolverMCTS::get_uct(Idx node) const
   float parent_visits = parent ? N[parent].visits : 0.f;
   float winrate = N[node].value / N[node].visits;
 
-  if (B.stm) winrate = -winrate;
+  if (B.stm == Blue) winrate = -winrate;
 
   float uncertainty = std::log(parent_visits) / visits;
   return winrate + Utc_C * sqrt(uncertainty);

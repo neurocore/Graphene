@@ -1,5 +1,6 @@
 #include <fstream>
 #include "learning.h"
+#include "pattern.h"
 #include "board.h"
 #include "utils.h"
 
@@ -63,16 +64,48 @@ bool DataProvider::open_dat(string file)
       B.make(mv);
     }
 
-    if (B.is_win(1)) game.result = B.stm ^ 1;
+    if (B.is_win(1)) game.winner = B.stm ^ 1;
     else
     {
-      // Game is corrupted (expected win)
+      // Game is not finished
+      // Required deep analysis of
+      //  virtual connections
       continue;
     }
 
     games.push_back(game);
   }
   return true;
+}
+
+void TunerPatterns::start()
+{
+  static const float win_score[] = { -0.5f, 1.0f };
+
+  for (const auto & game : games)
+  {
+    Board B;
+    for (Move move : game.moves)
+    {
+      const u32 key = B.extract_p6(move);
+      p6[key].played++;
+      p6[key].score += win_score[B.stm == game.winner];
+
+      B.make(move);
+
+      for (int r = 1; r <= B.sz; r++)
+      {
+        for (int f = 1; f <= B.sz; f++)
+        {
+          const SQ sq = to_sq(r, f);
+          const u32 key = B.extract_p6(sq);
+          p6[key].appeared++;
+        }
+      }
+    }
+  }
+
+  p6_stats();
 }
 
 }

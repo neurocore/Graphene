@@ -146,7 +146,7 @@ bool Engine::parse(string str)
     string time = cut(str);
     MS ms = parse_int(time, TimeInc);
 
-    go((Piece)B.stm, ms);
+    go(B.stm, ms);
   }
   else if (cmd == "time_settings")
   {
@@ -252,10 +252,12 @@ void Engine::go(Piece p, MS movetime)
 
 void Engine::learn_patterns(std::string file)
 {
-  vector<Game> games;
-  DataProvider(games).open(file);
+  TunerPatterns tuner;
+  tuner.open(file);
 
-  log("Loaded {} games\n", games.size());
+  log("Loaded {} games\n", tuner.size());
+
+  tuner.start();
 }
 
 }

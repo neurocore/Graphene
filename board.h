@@ -3,10 +3,9 @@
 #include "square.h"
 #include "consts.h"
 #include "moves.h"
+#include "piece.h"
 
 namespace Graphene {
-
-enum Piece : u8 { Red, Blue, Nop };
 
 // Used disjoint set union (DSU) for
 //  considering connections
@@ -14,7 +13,7 @@ enum Piece : u8 { Red, Blue, Nop };
 struct Board
 {
   int sz;
-  int stm = 0;
+  Piece stm = Red;
   Piece el[MaxSQ];
   SQ parent[MaxSQ];
   int order[MaxSQ];
@@ -30,6 +29,9 @@ struct Board
   bool is_win(int opp = 1);
   bool legal(Move move);
   void print() const;
+  bool in_board(SQ sq) const;
+  u32  extract_p6(SQ sq) const;
+  u32  extract_p12(SQ sq) const;
 
   void make(Move move);
   void generate(Moves & moves) const;

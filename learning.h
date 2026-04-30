@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "moves.h"
+#include "piece.h"
 
 using std::string;
 using std::vector;
@@ -15,7 +16,7 @@ namespace Graphene {
 struct Game
 {
   vector<Move> moves;
-  int result;
+  Piece winner;
 };
 
 class DataProvider // non-owning adapter
@@ -30,5 +31,18 @@ private:
   bool open_dat(string file);
 };
 
+// --------------------------------------------------------------------
+//  Tuners
+// --------------------------------------------------------------------
+
+class TunerPatterns
+{
+  vector<Game> games;
+
+public:
+  bool open(string file) { return DataProvider(games).open(file); }
+  size_t size() const { return games.size(); }
+  void start();
+};
 
 }
