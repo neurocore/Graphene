@@ -14,7 +14,7 @@ const float Utc_C = 1.41;
 
 struct alignas(64) Node
 {
-  u32 visits = 5;
+  u32 visits = 0;
   float value = 0.f;
 
   float prior_prob = 0.f; // P(s, a)

@@ -28,7 +28,7 @@ struct Board
   void place(SQ sq, Piece p);
   bool is_win(int opp = 1);
   bool legal(Move move);
-  void print() const;
+  void print(SQ move = None) const;
   bool in_board(SQ sq) const;
   u32  extract_p6(SQ sq) const;
   u32  extract_p12(SQ sq) const;

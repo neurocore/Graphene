@@ -51,7 +51,7 @@ void Board::init()
   }
 }
 
-void Board::print() const
+void Board::print(SQ move) const
 {
   string pad = " ";
   
@@ -65,10 +65,11 @@ void Board::print() const
     log("{}{:2d}  ", pad, r);
     for (int f = 1; f <= sz; f++)
     {
-      Piece p = el[to_sq(r, f)];
-      if      (p == Red)  log("\033[31mX\033[0m ");
-      else if (p == Blue) log("\033[36mO\033[0m ");
-      else                log(". ");
+      const SQ sq = to_sq(r, f);
+      const Piece p = el[sq];
+      int col = p == Red ? 31 : p == Blue ? 36 : 90;
+      if (sq == move) col += 60;
+      log("\033[{}m{}\033[0m ", col, "XO."[p]);
     }
     log("\n");
     pad += " ";

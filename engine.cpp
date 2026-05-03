@@ -267,9 +267,14 @@ void Engine::go(Piece p, MS movetime)
   response(to_string(move));
 
   B.make(move);
-  B.print();
+  B.print(move);
 
   S->print_stats();
+
+  if (B.is_win(1))
+  {
+    log("-- {} is won! --\n", B.stm == Red ? "Blue" : "Red");
+  }
 }
 
 void Engine::learn_patterns(std::string file)
