@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include "learning.h"
+#include "pattern.h"
 #include "engine.h"
 #include "utils.h"
 
@@ -23,6 +24,8 @@ Engine::~Engine()
 
 void Engine::start()
 {
+  p6_load();
+
   new_game();
 
   bool success = true;
@@ -205,6 +208,25 @@ bool Engine::parse(string str)
     }
     while(false);
   }
+  else if (cmd == "save") [[unlikely]]
+  {
+    do
+    {
+      string type = cut(str);
+      string file = cut(str);
+
+      if (type.empty()) { log("Format 'save [type] [file]'\n"); break; }
+      if (file.empty()) { log("Missing filename to save to\n"); break; }
+
+      if (type == "patterns") save_patterns(file);
+      else
+      {
+        log("Unknown learning type\n");
+        break;
+      }
+    }
+    while(false);
+  }
   else
   {
     error("unknown command");
@@ -258,6 +280,12 @@ void Engine::learn_patterns(std::string file)
   log("Loaded {} games\n", tuner.size());
 
   tuner.start();
+}
+
+void Engine::save_patterns(std::string file)
+{
+  p6_save(file);
+  log("Saved to {}\n", file);
 }
 
 }

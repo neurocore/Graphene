@@ -1,3 +1,4 @@
+#include <cassert>
 #include <fstream>
 #include "learning.h"
 #include "pattern.h"
@@ -62,6 +63,7 @@ bool DataProvider::open_dat(string file)
       game.moves.push_back(mv);
 
       B.make(mv);
+      if (B.is_win(1)) break;
     }
 
     if (B.is_win(1)) game.winner = B.stm ^ 1;
@@ -80,7 +82,7 @@ bool DataProvider::open_dat(string file)
 
 void TunerPatterns::start()
 {
-  static const float win_score[] = { -0.5f, 1.0f };
+  static const float win_score[] = { 0.3f, 1.0f };
 
   for (const auto & game : games)
   {
@@ -99,6 +101,7 @@ void TunerPatterns::start()
         {
           const SQ sq = to_sq(r, f);
           const u32 key = B.extract_p6(sq);
+
           p6[key].appeared++;
         }
       }

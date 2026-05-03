@@ -7,9 +7,9 @@ namespace Graphene {
 
 using Idx = u32;
 enum : u32 { Null, Root, Empty };
-enum WDL : u8 { NonTerminal, Win, Draw, Lose };
+enum WDL : u8 { NonTerminal, Win, Lose };
 
-const float wdl_value[] = { 0.f, 1.f, 0.f, -1.f };
+const float wdl_value[] = { 0.f, 1.f, -1.f };
 const float Utc_C = 1.41;
 
 struct alignas(64) Node
@@ -40,7 +40,7 @@ class SolverMCTS
   Idx nodes_ptr = Empty;
   Idx nodes_max = 100'000;
 
-  std::minstd_rand gen;
+  std::mt19937 gen;
   std::uniform_real_distribution<double> dist;
 
 public:

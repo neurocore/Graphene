@@ -4,6 +4,7 @@
 #include "solver_mcts.h"
 #include "moves.h"
 #include "utils.h"
+#include "pattern.h"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ void SolverMCTS::new_game()
 void SolverMCTS::set(const Board & board)
 {
   B = board;
+  B0 = board;
 }
 
 void SolverMCTS::set(const TimeSettings & time)
@@ -93,7 +95,6 @@ void SolverMCTS::print_stats() const
 
 WDL SolverMCTS::get_wdl()
 {
-  //if (B.is_draw()) return Draw; // no way
   if (B.is_win(1)) return Lose;
   if (B.is_win(0)) return Win;
   return NonTerminal;
@@ -118,12 +119,10 @@ float SolverMCTS::get_uct(Idx node) const
 {
   const int visits = N[node].visits;
   const Idx parent = N[node].parent_idx;
-  assert(visits > 0);
+  if (visits == 0) return 1e9f;
 
   float parent_visits = parent ? N[parent].visits : 0.f;
   float winrate = N[node].value / N[node].visits;
-
-  if (B.stm == Blue) winrate = -winrate;
 
   float uncertainty = std::log(parent_visits) / visits;
   return winrate + Utc_C * sqrt(uncertainty);
@@ -260,7 +259,7 @@ Idx SolverMCTS::get_most_visited(Idx node)
 
 float SolverMCTS::rollout(Idx node)
 {
-  int stm = B.stm;
+  Piece we = B.stm;
 
   WDL wdl;
   while ((wdl = get_wdl()) == NonTerminal)
@@ -268,11 +267,20 @@ float SolverMCTS::rollout(Idx node)
     Moves moves;
     B.generate(moves);
 
-    int best = (int)(dist(gen) * moves.size());
+    vector<double> scores;
+    for (int i = 0; i < moves.size(); i++)
+    {
+      u32 key = B.extract_p6(moves[i]);
+      const Pattern & p = p6[key];
+      const double rate = .001 + p.score; // + 1. * p.played / p.appeared;
+      scores.push_back(rate);
+    }
+    std::discrete_distribution<> d(scores.begin(), scores.end());
+    int best = d(gen);
+
     B.make(moves[best]);
   }
-
-  return (B.stm ^ stm) ? wdl_value[wdl] : -wdl_value[wdl];
+  return B.stm == we ? -wdl_value[wdl] : wdl_value[wdl];
 }
 
 void SolverMCTS::backprop(Idx node, float reward)

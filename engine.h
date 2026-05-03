@@ -30,6 +30,7 @@ public:
 
   // learning
   void learn_patterns(std::string file);
+  void save_patterns(std::string file);
 };
 
 }

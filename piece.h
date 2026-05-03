@@ -5,11 +5,11 @@
 
 namespace Graphene {
 
-enum Piece : u8 { Nop, Red, Blue };
+enum Piece : u8 { Red, Blue, Nop };
 
-INLINE Piece operator ~ (Piece p) { return static_cast<Piece>(p ^ 3); }
-INLINE Piece operator ^ (Piece p, int opp) { return static_cast<Piece>((int)p ^ (3 * opp)); }
-INLINE Piece & operator ^= (Piece & p, int opp) { p = p ^ opp; return p; }
+INLINE Piece operator ~ (Piece p) { return static_cast<Piece>((int)p ^ 1); }
+INLINE Piece operator ^ (Piece p, int o) { return static_cast<Piece>((int)p ^ o); }
+INLINE Piece & operator ^= (Piece & p, int o) { p = p ^ o; return p; }
 INLINE std::string to_string(Piece p) { return std::string() + "xo."[p]; }
 
 }

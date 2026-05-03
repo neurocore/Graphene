@@ -18,7 +18,7 @@ struct Board
   SQ parent[MaxSQ];
   int order[MaxSQ];
 
-  Board(int size = 13);
+  Board(int size = 9);
   Board(const Board & B);
   void init();
 

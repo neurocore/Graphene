@@ -85,12 +85,14 @@ u32 Board::extract_p6(SQ sq) const
 {
   assert(in_board(sq));
 
+  int opp = stm == Blue;
   u16 key = 0u;
 
   for (int offset : p6_offsets)
   {
+    Piece p = el[sq + offset];
     key *= 3;
-    key += el[sq + offset];
+    key += p == Nop ? Nop : p ^ opp;
   }
   return key;
 }
